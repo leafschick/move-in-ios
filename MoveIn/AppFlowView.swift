@@ -7,34 +7,40 @@ struct AppFlowView: View {
         case home
     }
 
-    @State private var currentScreen: Screen = .home
+    @State private var currentScreen: Screen = .login
 
     var body: some View {
-        Group {
-            switch currentScreen {
-            case .login:
-                LoginView(
-                    onLoginSuccess: {
-                        currentScreen = .home
-                    },
-                    onShowSignUp: {
-                        currentScreen = .signup
-                    }
-                )
+        NavigationStack {
+            Group {
+                switch currentScreen {
+                case .login:
+                    LoginView(
+                        onLoginSuccess: {
+                            currentScreen = .home
+                        },
+                        onShowSignUp: {
+                            currentScreen = .signup
+                        }
+                    )
 
-            case .signup:
-                SignUpView(
-                    onBackToLogin: {
-                        currentScreen = .login
-                    },
-                    onSignUpComplete: {
-                        currentScreen = .login
-                    }
-                )
+                case .signup:
+                    SignUpView(
+                        onBackToLogin: {
+                            currentScreen = .login
+                        },
+                        onSignUpComplete: {
+                            currentScreen = .login
+                        }
+                    )
 
-            case .home:
-                MainTabView()
+                case .home:
+                    MainTabView()
+                }
             }
         }
     }
+}
+
+#Preview {
+    AppFlowView()
 }
