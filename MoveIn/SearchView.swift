@@ -3,6 +3,8 @@ import UIKit
 
 struct SearchView: View {
     @Binding var initialSearchText: String
+    var onBack: () -> Void
+
     @State private var searchText: String = ""
     @State private var selectedFilter: SearchFilter = .topRated
 
@@ -137,9 +139,13 @@ struct SearchView: View {
     private var topBar: some View {
         VStack(spacing: 0) {
             HStack(spacing: 16) {
-                Image(systemName: "arrow.left")
-                    .font(.system(size: 20, weight: .semibold))
-                    .foregroundColor(.black)
+                Button {
+                    onBack()
+                } label: {
+                    Image(systemName: "arrow.left")
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundColor(.black)
+                }
 
                 Text("Find Movers")
                     .font(.system(size: 26, weight: .bold))
@@ -330,5 +336,8 @@ struct SearchMoverCard: View {
 }
 
 #Preview {
-    SearchView(initialSearchText: .constant(""))
+    SearchView(
+        initialSearchText: .constant(""),
+        onBack: {}
+    )
 }
