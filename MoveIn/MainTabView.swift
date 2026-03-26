@@ -16,12 +16,17 @@ struct MainTabView: View {
             }
             .tag(TabItem.home)
 
-            SearchView(initialSearchText: $globalSearchText)
-                .tabItem {
-                    Image(systemName: "magnifyingglass")
-                    Text("Search")
+            SearchView(
+                initialSearchText: $globalSearchText,
+                onBack: {
+                    selectedTab = .home
                 }
-                .tag(TabItem.search)
+            )
+            .tabItem {
+                Image(systemName: "magnifyingglass")
+                Text("Search")
+            }
+            .tag(TabItem.search)
 
             BookingsPlaceholderTabView()
                 .tabItem {
