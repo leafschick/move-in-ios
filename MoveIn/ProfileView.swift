@@ -25,35 +25,63 @@ struct ProfileView: View {
 
             Text("John Carter")
                 .font(.headline)
+                .padding(.bottom, 30)
 
-            Text("john.carter@email.com")
-                .foregroundColor(.gray)
 
-            VStack(alignment: .leading, spacing: 12) {
-                HStack {
-                    Image(systemName: "phone")
-                    Text("+1 (555) 123-4567")
-                }
+            VStack(spacing: 12) {
+                profileCard(
+                    title: "Email",
+                    value: "john.carter@email.com",
+                    systemImage: "envelope.fill"
+                )
+                
+                profileCard(
+                    title: "Phone Number",
+                    value: "+1 (555) 123-4567",
+                    systemImage: "phone.fill"
+                )
 
-                HStack {
-                    Image(systemName: "mappin.and.ellipse")
-                    Text("Los Angeles, CA")
-                }
+                profileCard(
+                    title: "Location",
+                    value: "Los Angeles, CA",
+                    systemImage: "mappin.and.ellipse"
+                )
 
-                HStack {
-                    Image(systemName: "truck.box")
-                    Text("Move-In Customer")
-                }
+                profileCard(
+                    title: "Account Type",
+                    value: "Move-In Customer",
+                    systemImage: "truck.box.fill"
+                )
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding()
-            .background(Color.gray.opacity(0.1))
-            .cornerRadius(12)
             .padding(.horizontal)
-
+            
             Spacer()
         }
     }
+}
+
+private func profileCard(title: String, value: String, systemImage: String) -> some View {
+    HStack(spacing: 14) {
+        Image(systemName: systemImage)
+            .foregroundColor(.blue)
+            .font(.system(size: 20))
+
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title)
+                .font(.system(size: 14))
+                .foregroundColor(.gray)
+
+            Text(value)
+                .font(.system(size: 17, weight: .semibold))
+                .foregroundColor(.black)
+        }
+
+        Spacer()
+    }
+    .padding()
+    .background(Color.white)
+    .clipShape(RoundedRectangle(cornerRadius: 16))
+    .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 3)
 }
 
 #Preview {
