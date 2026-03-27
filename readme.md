@@ -1,6 +1,6 @@
 # Move In
 
-A native iOS app that connects users with local moving companies. Browse movers, view details, and book a moving service — all from your phone.
+A native iOS app that connects users with local moving companies. Browse movers, view details, and book a moving service all from your phone.
 
 Built for **COMP3097 – Mobile App Development II** by Group 11.
 
