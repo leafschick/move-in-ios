@@ -28,14 +28,14 @@ struct MainTabView: View {
             }
             .tag(TabItem.search)
 
-            BookingsPlaceholderTabView()
+            DashboardView()
                 .tabItem {
                     Image(systemName: "calendar")
                     Text("Bookings")
                 }
                 .tag(TabItem.bookings)
 
-            ProfilePlaceholderTabView()
+            ProfileView()
                 .tabItem {
                     Image(systemName: "person")
                     Text("Profile")

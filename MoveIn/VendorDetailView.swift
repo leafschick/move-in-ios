@@ -4,6 +4,7 @@ import UIKit
 struct VendorDetailView: View {
     let mover: HomeMover
     @Environment(\.dismiss) private var dismiss
+    @State private var showBooking = false
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -118,6 +119,7 @@ struct VendorDetailView: View {
             }
 
             Button {
+                showBooking = true
             } label: {
                 Text("Book Now")
                     .font(.system(size: 20, weight: .bold))
@@ -131,6 +133,9 @@ struct VendorDetailView: View {
             .padding(.bottom, 24)
         }
         .navigationBarBackButtonHidden(true)
+        .sheet(isPresented: $showBooking) {
+            BookingView()
+        }
     }
 
     @ViewBuilder
