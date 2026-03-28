@@ -40,8 +40,6 @@ struct HomeView: View {
         }
     }
 
-    // MARK: - Header
-
     private var headerSection: some View {
         ZStack(alignment: .top) {
             LinearGradient(
@@ -106,8 +104,6 @@ struct HomeView: View {
         }
     }
 
-    // MARK: - Feature Cards
-
     private var featureCardsSection: some View {
         HStack(spacing: 14) {
             ForEach(features) { feature in
@@ -115,8 +111,6 @@ struct HomeView: View {
             }
         }
     }
-
-    // MARK: - Featured Movers
 
     private var featuredMoversSection: some View {
         VStack(spacing: 16) {
@@ -147,16 +141,12 @@ struct HomeView: View {
     }
 }
 
-// MARK: - Supporting Types
-
 struct HomeFeature: Identifiable {
     let id = UUID()
     let title: String
     let systemImage: String
     let color: Color
 }
-
-// MARK: - Supporting Views
 
 struct HomeFeatureCard: View {
     let feature: HomeFeature

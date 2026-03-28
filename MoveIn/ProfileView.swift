@@ -1,12 +1,8 @@
-//
-//  ProfileView.swift
-//  MoveIn
-//
-//  Created by Sofiia Beliak on 2026-03-26.
-//
 import SwiftUI
 
 struct ProfileView: View {
+    @AppStorage("isLoggedIn") private var isLoggedIn = false
+
     var body: some View {
         VStack(spacing: 20) {
             Text("Profile")
@@ -34,12 +30,10 @@ struct ProfileView: View {
                     Image(systemName: "phone")
                     Text("+1 (555) 123-4567")
                 }
-
                 HStack {
                     Image(systemName: "mappin.and.ellipse")
                     Text("Los Angeles, CA")
                 }
-
                 HStack {
                     Image(systemName: "truck.box")
                     Text("Move-In Customer")
@@ -52,6 +46,21 @@ struct ProfileView: View {
             .padding(.horizontal)
 
             Spacer()
+
+            // Log Out
+            Button(role: .destructive) {
+                isLoggedIn = false
+            } label: {
+                Text("Log Out")
+                    .fontWeight(.semibold)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.red.opacity(0.1))
+                    .foregroundColor(.red)
+                    .cornerRadius(12)
+            }
+            .padding(.horizontal)
+            .padding(.bottom, 32)
         }
     }
 }

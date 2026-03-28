@@ -1,40 +1,35 @@
 import SwiftUI
 
 struct AppFlowView: View {
-    enum Screen {
-        case login
-        case signup
-        case home
-    }
-
-    @State private var currentScreen: Screen = .login
+    @AppStorage("isLoggedIn") private var isLoggedIn = false
+    @State private var showSignUp = false
 
     var body: some View {
-        NavigationStack {
-            Group {
-                switch currentScreen {
-                case .login:
-                    LoginView(
-                        onLoginSuccess: {
-                            currentScreen = .home
-                        },
-                        onShowSignUp: {
-                            currentScreen = .signup
-                        }
-                    )
-
-                case .signup:
-                    SignUpView(
-                        onBackToLogin: {
-                            currentScreen = .login
-                        },
-                        onSignUpComplete: {
-                            currentScreen = .login
-                        }
-                    )
-
-                case .home:
-                    MainTabView()
+        if isLoggedIn {
+            MainTabView()
+        } else {
+            NavigationStack {
+                Group {
+                    if showSignUp {
+                        SignUpView(
+                            onBackToLogin: {
+                                showSignUp = false
+                            },
+                            onSignUpComplete: {
+                                showSignUp = false
+                                isLoggedIn = true
+                            }
+                        )
+                    } else {
+                        LoginView(
+                            onLoginSuccess: {
+                                isLoggedIn = true
+                            },
+                            onShowSignUp: {
+                                showSignUp = true
+                            }
+                        )
+                    }
                 }
             }
         }
