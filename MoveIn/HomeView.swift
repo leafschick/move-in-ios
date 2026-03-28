@@ -6,57 +6,21 @@ struct HomeView: View {
     @Binding var globalSearchText: String
 
     @State private var localSearchText: String = ""
-    @State private var showLogin = false
-    @State private var showSignUp = false
 
     private let features: [HomeFeature] = [
-        HomeFeature(title: "Verified", systemImage: "checkmark.shield", color: .blue),
-        HomeFeature(title: "Top Rated", systemImage: "arrow.up.right", color: .green),
-        HomeFeature(title: "Fast Book", systemImage: "clock", color: .orange)
+        HomeFeature(title: "Verified",  systemImage: "checkmark.shield", color: .blue),
+        HomeFeature(title: "Top Rated", systemImage: "arrow.up.right",   color: .green),
+        HomeFeature(title: "Fast Book", systemImage: "clock",             color: .orange)
     ]
 
-    private var filteredMovers: [HomeMover] {
-        if localSearchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            return movers
-        }
-
-        return movers.filter { mover in
-            mover.name.localizedCaseInsensitiveContains(localSearchText) ||
-            mover.city.localizedCaseInsensitiveContains(localSearchText) ||
-            mover.description.localizedCaseInsensitiveContains(localSearchText)
-        }
+    private var featuredMovers: [HomeMover] {
+        allMovers.filter { $0.isFeatured }
     }
-
-    private let movers: [HomeMover] = [
-        HomeMover(
-            name: "Swift Movers",
-            imageName: nil,
-            rating: 4.8,
-            reviewCount: 234,
-            priceRange: "$150-$300",
-            description: "Professional moving services with 10+ years of experience.",
-            city: "New York, NY",
-            services: ["Local Moving", "Long Distance Moving", "Packing Assistance", "Furniture Handling"],
-            isFeatured: true
-        ),
-        HomeMover(
-            name: "Urban Move Co.",
-            imageName: nil,
-            rating: 4.7,
-            reviewCount: 189,
-            priceRange: "$180-$350",
-            description: "Reliable local and long-distance moving with secure handling.",
-            city: "Brooklyn, NY",
-            services: ["Apartment Moving", "Office Relocation", "Packing", "Storage Help"],
-            isFeatured: true
-        )
-    ]
 
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(.systemGray6)
-                    .ignoresSafeArea()
+                Color(.systemGray6).ignoresSafeArea()
 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
@@ -74,33 +38,9 @@ struct HomeView: View {
             }
             .navigationBarHidden(true)
         }
-        .fullScreenCover(isPresented: $showLogin) {
-            LoginView(
-                onLoginSuccess: {
-                    showLogin = false
-                },
-                onShowSignUp: {
-                    showLogin = false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        showSignUp = true
-                    }
-                }
-            )
-        }
-        .fullScreenCover(isPresented: $showSignUp) {
-            SignUpView(
-                onBackToLogin: {
-                    showSignUp = false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        showLogin = true
-                    }
-                },
-                onSignUpComplete: {
-                    showSignUp = false
-                }
-            )
-        }
     }
+
+    // MARK: - Header
 
     private var headerSection: some View {
         ZStack(alignment: .top) {
@@ -109,10 +49,8 @@ struct HomeView: View {
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
-            .frame(height: 235)
-            .clipShape(
-                RoundedCorner(radius: 28, corners: [.bottomLeft, .bottomRight])
-            )
+            .frame(height: 200)
+            .clipShape(RoundedCorner(radius: 28, corners: [.bottomLeft, .bottomRight]))
 
             VStack(spacing: 22) {
                 HStack(alignment: .top) {
@@ -120,37 +58,11 @@ struct HomeView: View {
                         Text("Move-In")
                             .font(.system(size: 22, weight: .bold))
                             .foregroundColor(.white)
-
                         Text("Your moving partner")
                             .font(.system(size: 14, weight: .medium))
                             .foregroundColor(.white.opacity(0.85))
                     }
-
                     Spacer()
-
-                    HStack(spacing: 10) {
-                        Button {
-                            showLogin = true
-                        } label: {
-                            Text("Login")
-                                .font(.system(size: 15, weight: .semibold))
-                                .foregroundColor(.white)
-                                .frame(width: 72, height: 40)
-                                .background(Color.white.opacity(0.18))
-                                .clipShape(RoundedRectangle(cornerRadius: 12))
-                        }
-
-                        Button {
-                            showSignUp = true
-                        } label: {
-                            Text("Sign Up")
-                                .font(.system(size: 15, weight: .semibold))
-                                .foregroundColor(.blue)
-                                .frame(width: 84, height: 40)
-                                .background(Color.white)
-                                .clipShape(RoundedRectangle(cornerRadius: 12))
-                        }
-                    }
                 }
 
                 Button {
@@ -183,16 +95,18 @@ struct HomeView: View {
                         }
                     }
                     .padding(.horizontal, 18)
-                    .frame(height: 60)
+                    .frame(height: 56)
                     .background(Color.white)
                     .clipShape(RoundedRectangle(cornerRadius: 18))
                 }
                 .buttonStyle(.plain)
             }
             .padding(.horizontal, 18)
-            .padding(.top, 58)
+            .padding(.top, 54)
         }
     }
+
+    // MARK: - Feature Cards
 
     private var featureCardsSection: some View {
         HStack(spacing: 14) {
@@ -202,16 +116,16 @@ struct HomeView: View {
         }
     }
 
+    // MARK: - Featured Movers
+
     private var featuredMoversSection: some View {
         VStack(spacing: 16) {
             HStack {
                 Text("Featured Movers")
                     .font(.system(size: 28, weight: .bold))
-
                 Spacer()
-
                 Button {
-                    globalSearchText = localSearchText
+                    globalSearchText = ""
                     selectedTab = .search
                 } label: {
                     Text("View All")
@@ -221,7 +135,7 @@ struct HomeView: View {
                 .buttonStyle(.plain)
             }
 
-            ForEach(filteredMovers) { mover in
+            ForEach(featuredMovers) { mover in
                 NavigationLink {
                     VendorDetailView(mover: mover)
                 } label: {
@@ -233,6 +147,8 @@ struct HomeView: View {
     }
 }
 
+// MARK: - Supporting Types
+
 struct HomeFeature: Identifiable {
     let id = UUID()
     let title: String
@@ -240,18 +156,7 @@ struct HomeFeature: Identifiable {
     let color: Color
 }
 
-struct HomeMover: Identifiable {
-    let id = UUID()
-    let name: String
-    let imageName: String?
-    let rating: Double
-    let reviewCount: Int
-    let priceRange: String
-    let description: String
-    let city: String
-    let services: [String]
-    let isFeatured: Bool
-}
+// MARK: - Supporting Views
 
 struct HomeFeatureCard: View {
     let feature: HomeFeature
@@ -262,12 +167,10 @@ struct HomeFeatureCard: View {
                 Circle()
                     .fill(feature.color.opacity(0.14))
                     .frame(width: 48, height: 48)
-
                 Image(systemName: feature.systemImage)
                     .font(.system(size: 20, weight: .semibold))
                     .foregroundColor(feature.color)
             }
-
             Text(feature.title)
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(.primary)
@@ -310,21 +213,11 @@ struct HomeMoverCard: View {
                     .foregroundColor(.primary)
 
                 HStack(spacing: 8) {
-                    Image(systemName: "star.fill")
-                        .foregroundColor(.yellow)
-
-                    Text(String(format: "%.1f", mover.rating))
-                        .font(.system(size: 16, weight: .semibold))
-
-                    Text("(\(mover.reviewCount))")
-                        .foregroundColor(.gray)
-
-                    Text("•")
-                        .foregroundColor(.gray)
-
-                    Text(mover.priceRange)
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.blue)
+                    Image(systemName: "star.fill").foregroundColor(.yellow)
+                    Text(String(format: "%.1f", mover.rating)).font(.system(size: 16, weight: .semibold))
+                    Text("(\(mover.reviewCount))").foregroundColor(.gray)
+                    Text("•").foregroundColor(.gray)
+                    Text(mover.priceRange).font(.system(size: 16, weight: .semibold)).foregroundColor(.blue)
                 }
 
                 Text(mover.description)
@@ -333,12 +226,8 @@ struct HomeMoverCard: View {
                     .fixedSize(horizontal: false, vertical: true)
 
                 HStack(spacing: 6) {
-                    Image(systemName: "location")
-                        .foregroundColor(.gray)
-
-                    Text(mover.city)
-                        .font(.system(size: 15, weight: .medium))
-                        .foregroundColor(.gray)
+                    Image(systemName: "location").foregroundColor(.gray)
+                    Text(mover.city).font(.system(size: 15, weight: .medium)).foregroundColor(.gray)
                 }
             }
             .padding(16)
@@ -350,11 +239,8 @@ struct HomeMoverCard: View {
 
     @ViewBuilder
     private var moverImage: some View {
-        if let imageName = mover.imageName,
-           let uiImage = UIImage(named: imageName) {
-            Image(uiImage: uiImage)
-                .resizable()
-                .scaledToFill()
+        if let imageName = mover.imageName, let uiImage = UIImage(named: imageName) {
+            Image(uiImage: uiImage).resizable().scaledToFill()
         } else {
             LinearGradient(
                 colors: [Color.blue.opacity(0.9), Color.blue.opacity(0.55)],
@@ -363,36 +249,14 @@ struct HomeMoverCard: View {
             )
             .overlay(
                 VStack(spacing: 10) {
-                    Image(systemName: "truck.box.fill")
-                        .font(.system(size: 42))
-                        .foregroundColor(.white)
-
-                    Text(mover.name)
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundColor(.white)
+                    Image(systemName: "truck.box.fill").font(.system(size: 42)).foregroundColor(.white)
+                    Text(mover.name).font(.system(size: 20, weight: .bold)).foregroundColor(.white)
                 }
             )
         }
     }
 }
 
-struct RoundedCorner: Shape {
-    var radius: CGFloat = 20
-    var corners: UIRectCorner = .allCorners
-
-    func path(in rect: CGRect) -> Path {
-        let path = UIBezierPath(
-            roundedRect: rect,
-            byRoundingCorners: corners,
-            cornerRadii: CGSize(width: radius, height: radius)
-        )
-        return Path(path.cgPath)
-    }
-}
-
 #Preview {
-    HomeView(
-        selectedTab: .constant(.home),
-        globalSearchText: .constant("")
-    )
+    HomeView(selectedTab: .constant(.home), globalSearchText: .constant(""))
 }

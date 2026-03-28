@@ -9,91 +9,19 @@ struct SearchView: View {
     @State private var selectedFilter: SearchFilter = .topRated
 
     private var filteredMovers: [HomeMover] {
-        let filtered = movers.filter { mover in
+        let base = allMovers.filter { mover in
             searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
             mover.name.localizedCaseInsensitiveContains(searchText) ||
             mover.city.localizedCaseInsensitiveContains(searchText) ||
             mover.description.localizedCaseInsensitiveContains(searchText)
         }
-
         switch selectedFilter {
         case .topRated:
-            return filtered.sorted { $0.rating > $1.rating }
+            return base.sorted { $0.rating > $1.rating }
         case .bestPrice:
-            return filtered.sorted {
-                extractMinPrice(from: $0.priceRange) < extractMinPrice(from: $1.priceRange)
-            }
+            return base.sorted { extractMinPrice(from: $0.priceRange) < extractMinPrice(from: $1.priceRange) }
         }
     }
-
-    private let movers: [HomeMover] = [
-        HomeMover(
-            name: "EasyMove Pro",
-            imageName: nil,
-            rating: 4.9,
-            reviewCount: 456,
-            priceRange: "$180-$350",
-            description: "Premium moving service with insurance coverage included.",
-            city: "Los Angeles, CA",
-            services: ["Local Moving", "Insurance Coverage", "Packing Service", "Furniture Protection"],
-            isFeatured: true
-        ),
-        HomeMover(
-            name: "Family Movers Co",
-            imageName: nil,
-            rating: 4.7,
-            reviewCount: 289,
-            priceRange: "$140-$260",
-            description: "Friendly and affordable movers for homes and apartments.",
-            city: "San Diego, CA",
-            services: ["Family Moves", "Apartment Relocation", "Packing", "Loading Help"],
-            isFeatured: false
-        ),
-        HomeMover(
-            name: "Swift Movers",
-            imageName: nil,
-            rating: 4.8,
-            reviewCount: 234,
-            priceRange: "$150-$300",
-            description: "Professional moving services with 10+ years of experience.",
-            city: "New York, NY",
-            services: ["Local Moving", "Long Distance Moving", "Packing Assistance", "Furniture Handling"],
-            isFeatured: true
-        ),
-        HomeMover(
-            name: "Urban Move Co.",
-            imageName: nil,
-            rating: 4.6,
-            reviewCount: 198,
-            priceRange: "$160-$290",
-            description: "Reliable local and long-distance moving with secure handling.",
-            city: "Brooklyn, NY",
-            services: ["Office Moves", "Apartment Moves", "Packing", "Storage Support"],
-            isFeatured: false
-        ),
-        HomeMover(
-            name: "Golden Route Movers",
-            imageName: nil,
-            rating: 4.5,
-            reviewCount: 165,
-            priceRange: "$120-$220",
-            description: "Budget-friendly moving team with quick booking options.",
-            city: "Sacramento, CA",
-            services: ["Budget Moves", "Quick Booking", "Local Relocation", "Basic Packing"],
-            isFeatured: false
-        ),
-        HomeMover(
-            name: "Prime Relocation",
-            imageName: nil,
-            rating: 4.8,
-            reviewCount: 321,
-            priceRange: "$200-$380",
-            description: "Trusted relocation specialists for large and complex moves.",
-            city: "Chicago, IL",
-            services: ["Large Moves", "Commercial Moving", "Packing", "Special Item Handling"],
-            isFeatured: true
-        )
-    ]
 
     var body: some View {
         NavigationStack {
@@ -124,43 +52,35 @@ struct SearchView: View {
             }
             .background(Color(.systemGray6).ignoresSafeArea())
             .navigationBarHidden(true)
-            .onAppear {
-                searchText = initialSearchText
-            }
-            .onChange(of: initialSearchText) { newValue in
-                searchText = newValue
-            }
-            .onChange(of: searchText) { newValue in
-                initialSearchText = newValue
-            }
+            .onAppear { searchText = initialSearchText }
+            .onChange(of: initialSearchText) { newValue in searchText = newValue }
+            .onChange(of: searchText)       { newValue in initialSearchText = newValue }
         }
     }
+
+    // MARK: - Top Bar
 
     private var topBar: some View {
         VStack(spacing: 0) {
             HStack(spacing: 16) {
-                Button {
-                    onBack()
-                } label: {
+                Button { onBack() } label: {
                     Image(systemName: "arrow.left")
                         .font(.system(size: 20, weight: .semibold))
                         .foregroundColor(.black)
                 }
-
                 Text("Find Movers")
                     .font(.system(size: 26, weight: .bold))
                     .foregroundColor(.black)
-
                 Spacer()
             }
             .padding(.horizontal, 16)
-            .padding(.top, 18)
-            .padding(.bottom, 18)
-
+            .padding(.vertical, 18)
             Divider()
         }
         .background(Color.white)
     }
+
+    // MARK: - Search & Filter
 
     private var searchAndFilterSection: some View {
         VStack(spacing: 14) {
@@ -179,8 +99,7 @@ struct SearchView: View {
                         searchText = ""
                         initialSearchText = ""
                     } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(.gray)
+                        Image(systemName: "xmark.circle.fill").foregroundColor(.gray)
                     }
                 }
             }
@@ -192,16 +111,6 @@ struct SearchView: View {
             HStack(spacing: 10) {
                 filterButton(title: "Top Rated", filter: .topRated)
                 filterButton(title: "Best Price", filter: .bestPrice)
-
-                Button {
-                } label: {
-                    Image(systemName: "slider.horizontal.3")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.gray)
-                        .frame(width: 48, height: 44)
-                        .background(Color(.systemGray6))
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                }
             }
         }
         .padding(.horizontal, 16)
@@ -210,9 +119,7 @@ struct SearchView: View {
     }
 
     private func filterButton(title: String, filter: SearchFilter) -> some View {
-        Button {
-            selectedFilter = filter
-        } label: {
+        Button { selectedFilter = filter } label: {
             Text(title)
                 .font(.system(size: 15, weight: .semibold))
                 .foregroundColor(selectedFilter == filter ? .white : .gray)
@@ -224,19 +131,22 @@ struct SearchView: View {
     }
 
     private func extractMinPrice(from priceRange: String) -> Int {
-        let numbers = priceRange
+        priceRange
             .replacingOccurrences(of: "$", with: "")
             .components(separatedBy: "-")
             .compactMap { Int($0.trimmingCharacters(in: .whitespaces)) }
-
-        return numbers.first ?? 0
+            .first ?? 0
     }
 }
+
+// MARK: - Filter Enum
 
 enum SearchFilter {
     case topRated
     case bestPrice
 }
+
+// MARK: - Mover Card
 
 struct SearchMoverCard: View {
     let mover: HomeMover
@@ -262,26 +172,14 @@ struct SearchMoverCard: View {
             }
 
             VStack(alignment: .leading, spacing: 10) {
-                Text(mover.name)
-                    .font(.system(size: 20, weight: .bold))
-                    .foregroundColor(.primary)
+                Text(mover.name).font(.system(size: 20, weight: .bold)).foregroundColor(.primary)
 
                 HStack(spacing: 8) {
-                    Image(systemName: "star.fill")
-                        .foregroundColor(.yellow)
-
-                    Text(String(format: "%.1f", mover.rating))
-                        .font(.system(size: 15, weight: .semibold))
-
-                    Text("(\(mover.reviewCount))")
-                        .foregroundColor(.gray)
-
-                    Text("•")
-                        .foregroundColor(.gray)
-
-                    Text(mover.priceRange)
-                        .font(.system(size: 15, weight: .semibold))
-                        .foregroundColor(.blue)
+                    Image(systemName: "star.fill").foregroundColor(.yellow)
+                    Text(String(format: "%.1f", mover.rating)).font(.system(size: 15, weight: .semibold))
+                    Text("(\(mover.reviewCount))").foregroundColor(.gray)
+                    Text("•").foregroundColor(.gray)
+                    Text(mover.priceRange).font(.system(size: 15, weight: .semibold)).foregroundColor(.blue)
                 }
 
                 Text(mover.description)
@@ -290,12 +188,8 @@ struct SearchMoverCard: View {
                     .fixedSize(horizontal: false, vertical: true)
 
                 HStack(spacing: 6) {
-                    Image(systemName: "location")
-                        .foregroundColor(.gray)
-
-                    Text(mover.city)
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.gray)
+                    Image(systemName: "location").foregroundColor(.gray)
+                    Text(mover.city).font(.system(size: 14, weight: .medium)).foregroundColor(.gray)
                 }
             }
             .padding(14)
@@ -307,11 +201,8 @@ struct SearchMoverCard: View {
 
     @ViewBuilder
     private var moverImage: some View {
-        if let imageName = mover.imageName,
-           let uiImage = UIImage(named: imageName) {
-            Image(uiImage: uiImage)
-                .resizable()
-                .scaledToFill()
+        if let imageName = mover.imageName, let uiImage = UIImage(named: imageName) {
+            Image(uiImage: uiImage).resizable().scaledToFill()
         } else {
             LinearGradient(
                 colors: [Color.orange.opacity(0.85), Color.blue.opacity(0.75)],
@@ -320,10 +211,7 @@ struct SearchMoverCard: View {
             )
             .overlay(
                 VStack(spacing: 10) {
-                    Image(systemName: "truck.box.fill")
-                        .font(.system(size: 36))
-                        .foregroundColor(.white)
-
+                    Image(systemName: "truck.box.fill").font(.system(size: 36)).foregroundColor(.white)
                     Text(mover.name)
                         .font(.system(size: 18, weight: .bold))
                         .foregroundColor(.white)
@@ -336,8 +224,5 @@ struct SearchMoverCard: View {
 }
 
 #Preview {
-    SearchView(
-        initialSearchText: .constant(""),
-        onBack: {}
-    )
+    SearchView(initialSearchText: .constant(""), onBack: {})
 }
