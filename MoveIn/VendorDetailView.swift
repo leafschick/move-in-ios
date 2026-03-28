@@ -8,8 +8,7 @@ struct VendorDetailView: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            Color(.systemGray6)
-                .ignoresSafeArea()
+            Color(.systemGray6).ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
@@ -31,9 +30,7 @@ struct VendorDetailView: View {
                                 .padding(.leading, 20)
                         }
 
-                        Button {
-                            dismiss()
-                        } label: {
+                        Button { dismiss() } label: {
                             Image(systemName: "chevron.left")
                                 .font(.system(size: 18, weight: .bold))
                                 .foregroundColor(.black)
@@ -53,54 +50,32 @@ struct VendorDetailView: View {
                             .foregroundColor(.black)
 
                         HStack(spacing: 8) {
-                            Image(systemName: "star.fill")
-                                .foregroundColor(.yellow)
-
+                            Image(systemName: "star.fill").foregroundColor(.yellow)
                             Text(String(format: "%.1f", mover.rating))
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(.black)
-
+                                .font(.system(size: 16, weight: .semibold)).foregroundColor(.black)
                             Text("(\(mover.reviewCount) reviews)")
-                                .font(.system(size: 16))
-                                .foregroundColor(.gray)
-
-                            Text("•")
-                                .foregroundColor(.gray)
-
+                                .font(.system(size: 16)).foregroundColor(.gray)
+                            Text("•").foregroundColor(.gray)
                             Text(mover.priceRange)
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(.blue)
+                                .font(.system(size: 16, weight: .semibold)).foregroundColor(.blue)
                         }
 
                         HStack(spacing: 8) {
-                            Image(systemName: "mappin.and.ellipse")
-                                .foregroundColor(.gray)
-
-                            Text(mover.city)
-                                .font(.system(size: 15))
-                                .foregroundColor(.gray)
+                            Image(systemName: "mappin.and.ellipse").foregroundColor(.gray)
+                            Text(mover.city).font(.system(size: 15)).foregroundColor(.gray)
                         }
 
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("About")
-                                .font(.system(size: 18, weight: .bold))
-                                .foregroundColor(.black)
-
+                            Text("About").font(.system(size: 18, weight: .bold)).foregroundColor(.black)
                             Text(mover.description)
-                                .font(.system(size: 16))
-                                .foregroundColor(.gray)
+                                .font(.system(size: 16)).foregroundColor(.gray)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
 
                         VStack(alignment: .leading, spacing: 10) {
-                            Text("Services")
-                                .font(.system(size: 18, weight: .bold))
-                                .foregroundColor(.black)
-
+                            Text("Services").font(.system(size: 18, weight: .bold)).foregroundColor(.black)
                             ForEach(mover.services, id: \.self) { service in
-                                Text("• \(service)")
-                                    .font(.system(size: 16))
-                                    .foregroundColor(.gray)
+                                Text("• \(service)").font(.system(size: 16)).foregroundColor(.gray)
                             }
                         }
 
@@ -110,17 +85,13 @@ struct VendorDetailView: View {
                     .padding(.top, 28)
                     .padding(.bottom, 24)
                     .background(Color.white)
-                    .clipShape(
-                        RoundedCorner(radius: 30, corners: [.topLeft, .topRight])
-                    )
+                    .clipShape(RoundedCorner(radius: 30, corners: [.topLeft, .topRight]))
                     .offset(y: -22)
                     .padding(.bottom, -22)
                 }
             }
 
-            Button {
-                showBooking = true
-            } label: {
+            Button { showBooking = true } label: {
                 Text("Book Now")
                     .font(.system(size: 20, weight: .bold))
                     .foregroundColor(.white)
@@ -134,17 +105,14 @@ struct VendorDetailView: View {
         }
         .navigationBarBackButtonHidden(true)
         .sheet(isPresented: $showBooking) {
-            BookingView()
+            BookingView(mover: mover)
         }
     }
 
     @ViewBuilder
     private var moverHeaderImage: some View {
-        if let imageName = mover.imageName,
-           let uiImage = UIImage(named: imageName) {
-            Image(uiImage: uiImage)
-                .resizable()
-                .scaledToFill()
+        if let imageName = mover.imageName, let uiImage = UIImage(named: imageName) {
+            Image(uiImage: uiImage).resizable().scaledToFill()
         } else {
             LinearGradient(
                 colors: [Color.blue.opacity(0.95), Color.blue.opacity(0.65)],
@@ -153,13 +121,8 @@ struct VendorDetailView: View {
             )
             .overlay(
                 VStack(spacing: 16) {
-                    Image(systemName: "truck.box.fill")
-                        .font(.system(size: 64))
-                        .foregroundColor(.white)
-
-                    Text(mover.name)
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(.white)
+                    Image(systemName: "truck.box.fill").font(.system(size: 64)).foregroundColor(.white)
+                    Text(mover.name).font(.system(size: 24, weight: .bold)).foregroundColor(.white)
                 }
             )
         }
