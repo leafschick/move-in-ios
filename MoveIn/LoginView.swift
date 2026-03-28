@@ -2,10 +2,12 @@ import SwiftUI
 
 struct LoginView: View {
     let onLoginSuccess: () -> Void
-    let onShowSignUp: () -> Void
+    let onShowSignUp:   () -> Void
 
-    @State private var email = ""
-    @State private var password = ""
+    @State private var email       = ""
+    @State private var password    = ""
+    @State private var showError   = false
+    @State private var errorMessage = ""
 
     var body: some View {
         VStack(spacing: 0) {
@@ -13,8 +15,7 @@ struct LoginView: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 24) {
-                    Spacer()
-                        .frame(height: 32)
+                    Spacer().frame(height: 32)
 
                     headerSection
 
@@ -25,7 +26,6 @@ struct LoginView: View {
                             systemImage: "envelope",
                             text: $email
                         )
-
                         AuthTextField(
                             title: "Password",
                             placeholder: "Enter your password",
@@ -36,9 +36,16 @@ struct LoginView: View {
                     }
                     .padding(.top, 8)
 
-                    Button(action: {
-                        onLoginSuccess()
-                    }) {
+                    if showError {
+                        Text(errorMessage)
+                            .font(.system(size: 14))
+                            .foregroundColor(.red)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+
+                    Button {
+                        handleLogin()
+                    } label: {
                         Text("Login")
                             .font(.system(size: 20, weight: .semibold))
                             .foregroundColor(.white)
@@ -53,10 +60,9 @@ struct LoginView: View {
                     HStack(spacing: 4) {
                         Text("Don't have an account?")
                             .foregroundColor(.black.opacity(0.75))
-
-                        Button(action: {
+                        Button {
                             onShowSignUp()
-                        }) {
+                        } label: {
                             Text("Sign Up")
                                 .foregroundColor(.blue)
                                 .fontWeight(.semibold)
@@ -65,8 +71,7 @@ struct LoginView: View {
                     .font(.system(size: 17))
                     .padding(.top, 10)
 
-                    Spacer()
-                        .frame(height: 30)
+                    Spacer().frame(height: 30)
                 }
                 .padding(.horizontal, 20)
             }
@@ -75,14 +80,25 @@ struct LoginView: View {
         .navigationBarBackButtonHidden(true)
     }
 
+    private func handleLogin() {
+        showError = false
+        guard !email.trimmingCharacters(in: .whitespaces).isEmpty else {
+            errorMessage = "Please enter your email."
+            showError = true
+            return
+        }
+        guard !password.isEmpty else {
+            errorMessage = "Please enter your password."
+            showError = true
+            return
+        }
+        onLoginSuccess()
+    }
+
     private var topBar: some View {
         HStack {
-            Image(systemName: "arrow.left")
-                .font(.system(size: 20, weight: .medium))
-
             Text("Login")
                 .font(.system(size: 24, weight: .semibold))
-
             Spacer()
         }
         .padding(.horizontal, 20)
@@ -101,7 +117,6 @@ struct LoginView: View {
             Text("Move-In")
                 .font(.system(size: 34, weight: .bold))
                 .foregroundColor(.blue)
-
             Text("Welcome back! Please login to continue")
                 .font(.system(size: 18))
                 .foregroundColor(.black.opacity(0.7))
@@ -112,8 +127,5 @@ struct LoginView: View {
 }
 
 #Preview {
-    LoginView(
-        onLoginSuccess: {},
-        onShowSignUp: {}
-    )
+    LoginView(onLoginSuccess: {}, onShowSignUp: {})
 }
