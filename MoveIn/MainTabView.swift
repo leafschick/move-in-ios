@@ -35,6 +35,13 @@ struct MainTabView: View {
                 }
                 .tag(TabItem.bookings)
 
+            NotificationView()
+                .tabItem {
+                    Image(systemName: "bell")
+                    Text("Notifications")
+                }
+                .tag(TabItem.notifications)
+
             ProfileView()
                 .tabItem {
                     Image(systemName: "person")
@@ -50,6 +57,7 @@ enum TabItem {
     case home
     case search
     case bookings
+    case notifications
     case profile
 }
 
