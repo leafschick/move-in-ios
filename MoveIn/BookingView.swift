@@ -74,6 +74,12 @@ struct BookingView: View {
 
                 Button(action: {
                     showAlert = true
+                    NotificationManager.shared.scheduleNotification(
+                        title: "Booking Confirmed ✅",
+                        message: "Your booking for moving assistance has been successfully confirmed!",
+                        delay: 3.0,
+                        type: .success
+                    )
                 }) {
                     Text("Confirm Booking")
                         .foregroundColor(.white)

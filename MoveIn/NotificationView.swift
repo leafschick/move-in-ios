@@ -35,13 +35,7 @@ struct AppNotification: Identifiable {
 }
 
 struct NotificationView: View {
-    @State private var notifications: [AppNotification] = [
-        AppNotification(title: "Booking Confirmed", message: "Your booking with Swift Movers has been confirmed for tomorrow at 9 AM.", timeAgo: "10m ago", isRead: false, type: .success),
-        AppNotification(title: "Payment Received", message: "We've successfully processed your payment of $250.", timeAgo: "1h ago", isRead: false, type: .success),
-        AppNotification(title: "New Message", message: "Urban Move Co: 'Hi, we will be arriving exactly on time. Please ensure the parking is clear.'", timeAgo: "2h ago", isRead: true, type: .message),
-        AppNotification(title: "Special Offer!", message: "Get 20% off your next booking. Use code MOVE20.", timeAgo: "1d ago", isRead: true, type: .promo),
-        AppNotification(title: "Action Required", message: "Please update your profile information regarding your current address details.", timeAgo: "2d ago", isRead: true, type: .alert)
-    ]
+    @EnvironmentObject var notificationManager: NotificationManager
     
     var body: some View {
         NavigationStack {
@@ -49,12 +43,12 @@ struct NotificationView: View {
                 Color(.systemGray6)
                     .ignoresSafeArea()
                 
-                if notifications.isEmpty {
+                if notificationManager.notifications.isEmpty {
                     emptyStateView
                 } else {
                     ScrollView {
                         LazyVStack(spacing: 12) {
-                            ForEach(notifications) { notification in
+                            ForEach(notificationManager.notifications) { notification in
                                 NotificationRowView(notification: notification)
                             }
                         }
@@ -141,4 +135,5 @@ struct NotificationRowView: View {
 
 #Preview {
     NotificationView()
+        .environmentObject(NotificationManager.shared)
 }
