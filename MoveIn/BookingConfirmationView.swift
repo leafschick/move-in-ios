@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct BookingConfirmationView: View {
     @Environment(\.dismiss) var dismiss
@@ -93,8 +94,9 @@ struct BookingConfirmationView: View {
 
                     Button(action: {
                         onEditBooking?()
+                        dismiss()
                     }) {
-                        Text("Edit Booking")
+                        Text("Done")
                             .foregroundColor(.blue)
                             .frame(maxWidth: .infinity)
                             .padding()
@@ -104,17 +106,6 @@ struct BookingConfirmationView: View {
                                     .stroke(Color.blue, lineWidth: 1)
                             )
                     }
-                }
-
-                Button(action: {
-                    dismiss()
-                }) {
-                    Text("Back to Home")
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.purple)
-                        .cornerRadius(12)
                 }
 
                 Spacer(minLength: 20)
