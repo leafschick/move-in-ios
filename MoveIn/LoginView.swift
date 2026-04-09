@@ -4,6 +4,7 @@ struct LoginView: View {
     let onCustomerLogin: () -> Void
     let onVendorLogin: () -> Void
     let onShowSignUp: () -> Void
+    let onBack: () -> Void
     
 
     var body: some View {
@@ -112,8 +113,13 @@ struct LoginView: View {
 
     private var topBar: some View {
         HStack {
-            Image(systemName: "arrow.left")
-                .font(.system(size: 20, weight: .medium))
+            Button(action: {
+                onBack()
+            }) {
+                    Image(systemName: "arrow.left")
+                        .font(.system(size: 20, weight: .medium))
+                        .foregroundColor(.black)
+                }
 
             Text("Login")
                 .font(.system(size: 24, weight: .semibold))
@@ -150,6 +156,7 @@ struct LoginView: View {
     LoginView(
         onCustomerLogin: {},
         onVendorLogin: {},
-        onShowSignUp: {}
+        onShowSignUp: {},
+        onBack: {}
     )
 }

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct AppFlowView: View {
     enum Screen {
+        case landing
         case login
         case signup
         case customerLogin
@@ -9,12 +10,22 @@ struct AppFlowView: View {
         case home
     }
 
-    @State private var currentScreen: Screen = .home
+    @State private var currentScreen: Screen = .landing
 
     var body: some View {
         NavigationStack {
             Group {
                 switch currentScreen {
+                case .landing:
+                    LandingView(
+                        onLoginTap: {
+                            currentScreen = .login
+                        },
+                        onSignUpTap: {
+                            currentScreen = .signup
+                        }
+                    )
+                    
                 case .login:
                     LoginView(
                         onCustomerLogin: {
@@ -25,14 +36,19 @@ struct AppFlowView: View {
                         },
                         onShowSignUp: {
                             currentScreen = .signup
+                        },
+                        onBack: {
+                            currentScreen = .landing
                         }
                     )
                     
                 case .signup:
                     SignUpView(
-                        onBackToLogin: {
+                        onBack: {
+                            currentScreen = .landing
+                        },
+                        onShowLogin: {
                             currentScreen = .login
-                            
                         }
                     )
                     
