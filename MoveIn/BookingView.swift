@@ -1,9 +1,10 @@
-//
+
 //  BookingView.swift
 //  MoveIn
 //
 //  Created by Sofia Beliak on 2026-03-26.
 //
+
 import SwiftUI
 
 struct BookingView: View {
@@ -11,7 +12,14 @@ struct BookingView: View {
     @State private var preferredTime = ""
     @State private var fromLocation = ""
     @State private var toLocation = ""
-    @State private var showAlert = false
+
+    @State private var showError = false
+    @State private var errorMessage = ""
+    @State private var goToConfirmation = false
+
+    let serviceName = "EasyMove Pro"
+    let serviceLocation = "Los Angeles, CA"
+    let estimatedPrice = "$180 - $350"
 
     var body: some View {
         ScrollView {
@@ -22,13 +30,13 @@ struct BookingView: View {
                     .padding(.top)
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("EasyMove Pro")
+                    Text(serviceName)
                         .font(.headline)
 
-                    Text("Los Angeles, CA")
+                    Text(serviceLocation)
                         .foregroundColor(.gray)
 
-                    Text("$180 - $350")
+                    Text(estimatedPrice)
                         .fontWeight(.semibold)
                         .foregroundColor(.blue)
                 }
@@ -64,7 +72,7 @@ struct BookingView: View {
                         .font(.headline)
 
                     Text("Service: Moving Assistance")
-                    Text("Estimated Price: $180 - $350")
+                    Text("Estimated Price: \(estimatedPrice)")
                     Text("Status: Pending Confirmation")
                 }
                 .padding()
@@ -72,14 +80,14 @@ struct BookingView: View {
                 .background(Color.gray.opacity(0.1))
                 .cornerRadius(12)
 
+                if showError {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .font(.subheadline)
+                }
+
                 Button(action: {
-                    showAlert = true
-                    NotificationManager.shared.scheduleNotification(
-                        title: "Booking Confirmed ✅",
-                        message: "Your booking for moving assistance has been successfully confirmed!",
-                        delay: 3.0,
-                        type: .success
-                    )
+                    confirmBooking()
                 }) {
                     Text("Confirm Booking")
                         .foregroundColor(.white)
@@ -88,8 +96,22 @@ struct BookingView: View {
                         .background(Color.blue)
                         .cornerRadius(12)
                 }
-                .alert("Booking submitted successfully!", isPresented: $showAlert) {
-                    Button("OK", role: .cancel) { }
+
+                NavigationLink(
+                    destination: BookingConfirmationView(
+                        serviceName: serviceName,
+                        bookingDate: movingDate,
+                        bookingTime: preferredTime,
+                        pickupLocation: fromLocation,
+                        dropoffLocation: toLocation,
+                        totalPrice: estimatedPrice,
+                        onEditBooking: {
+                            goToConfirmation = false
+                        }
+                    ),
+                    isActive: $goToConfirmation
+                ) {
+                    EmptyView()
                 }
 
                 Spacer()
@@ -97,8 +119,33 @@ struct BookingView: View {
             .padding()
         }
     }
+
+    func confirmBooking() {
+        let trimmedDate = movingDate.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedTime = preferredTime.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedFrom = fromLocation.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedTo = toLocation.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if trimmedDate.isEmpty || trimmedTime.isEmpty || trimmedFrom.isEmpty || trimmedTo.isEmpty {
+            errorMessage = "Please fill in all booking details."
+            showError = true
+            return
+        }
+
+        showError = false
+        goToConfirmation = true
+
+        NotificationManager.shared.scheduleNotification(
+            title: "Booking Confirmed ✅",
+            message: "Your booking for moving assistance has been successfully confirmed!",
+            delay: 3.0,
+            type: .success
+        )
+    }
 }
 
 #Preview {
-    BookingView()
+    NavigationStack {
+        BookingView()
+    }
 }

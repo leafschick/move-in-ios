@@ -68,4 +68,5 @@ struct AppFlowView: View {
 
 #Preview {
     AppFlowView()
+        .environmentObject(NotificationManager())
 }
