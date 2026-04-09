@@ -4,10 +4,12 @@ struct AppFlowView: View {
     enum Screen {
         case login
         case signup
+        case customerLogin
+        case vendorLogin
         case home
     }
 
-    @State private var currentScreen: Screen = .login
+    @State private var currentScreen: Screen = .home
 
     var body: some View {
         NavigationStack {
@@ -15,24 +17,47 @@ struct AppFlowView: View {
                 switch currentScreen {
                 case .login:
                     LoginView(
-                        onLoginSuccess: {
-                            currentScreen = .home
+                        onCustomerLogin: {
+                            currentScreen = .customerLogin
+                        },
+                        onVendorLogin: {
+                            currentScreen = .vendorLogin
                         },
                         onShowSignUp: {
                             currentScreen = .signup
                         }
                     )
-
+                    
                 case .signup:
                     SignUpView(
                         onBackToLogin: {
                             currentScreen = .login
-                        },
-                        onSignUpComplete: {
-                            currentScreen = .login
+                            
                         }
                     )
-
+                    
+                case .customerLogin:
+                    CustomerLoginView(
+                        onLoginSuccess: {
+                            currentScreen = .home
+                        },
+                        onBack: {
+                            currentScreen = .login
+                        },
+                        onShowSignUp: {
+                            currentScreen = .signup
+                        }
+                )
+                
+            case .vendorLogin:
+                VendorLoginView(
+                    onLoginSuccess: {
+                        currentScreen = .home
+                    },
+                    onBack: {
+                        currentScreen = .login
+                    }
+            )
                 case .home:
                     MainTabView()
                 }

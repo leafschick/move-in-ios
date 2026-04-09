@@ -4,29 +4,32 @@ import UIKit
 struct HomeView: View {
     @Binding var selectedTab: TabItem
     @Binding var globalSearchText: String
-
+    
     @State private var localSearchText: String = ""
     @State private var showLogin = false
     @State private var showSignUp = false
-
+    @State private var showCustomerLogin = false
+    @State private var showVendorLogin = false
+    @State private var showVendorDashboard = false
+    
     private let features: [HomeFeature] = [
         HomeFeature(title: "Verified", systemImage: "checkmark.shield", color: .blue),
         HomeFeature(title: "Top Rated", systemImage: "arrow.up.right", color: .green),
         HomeFeature(title: "Fast Book", systemImage: "clock", color: .orange)
     ]
-
+    
     private var filteredMovers: [HomeMover] {
         if localSearchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return movers
         }
-
+        
         return movers.filter { mover in
             mover.name.localizedCaseInsensitiveContains(localSearchText) ||
             mover.city.localizedCaseInsensitiveContains(localSearchText) ||
             mover.description.localizedCaseInsensitiveContains(localSearchText)
         }
     }
-
+    
     private let movers: [HomeMover] = [
         HomeMover(
             name: "Swift Movers",
@@ -51,17 +54,17 @@ struct HomeView: View {
             isFeatured: true
         )
     ]
-
+    
     var body: some View {
         NavigationStack {
             ZStack {
                 Color(.systemGray6)
                     .ignoresSafeArea()
-
+                
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
                         headerSection
-
+                        
                         VStack(spacing: 20) {
                             featureCardsSection
                             featuredMoversSection
@@ -76,9 +79,20 @@ struct HomeView: View {
         }
         .fullScreenCover(isPresented: $showLogin) {
             LoginView(
-                onLoginSuccess: {
+                onCustomerLogin: {
                     showLogin = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        showCustomerLogin = true
+                    }
                 },
+                
+                onVendorLogin: {
+                    showLogin = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        showVendorLogin = true
+                    }
+                },
+                
                 onShowSignUp: {
                     showLogin = false
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
@@ -94,15 +108,52 @@ struct HomeView: View {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                         showLogin = true
                     }
-                },
-                onSignUpComplete: {
-                    showSignUp = false
                 }
             )
         }
+        
+        .fullScreenCover(isPresented: $showCustomerLogin) {
+            CustomerLoginView(
+                onLoginSuccess: {
+                    showCustomerLogin = false
+                },
+                onBack: {
+                    showCustomerLogin = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        showLogin = true
+                    }
+                },
+                onShowSignUp: {
+                    showCustomerLogin = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        showSignUp = true
+                    }
+                }
+            )
+        }
+        
+        .fullScreenCover(isPresented: $showVendorLogin) {
+            VendorLoginView(
+                onLoginSuccess: {
+                    showVendorLogin = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        showVendorDashboard = true
+                    }
+                },
+                onBack: {
+                    showVendorLogin = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        showLogin = true
+                    }
+                }
+            )
+        }
+        
+        .fullScreenCover(isPresented: $showVendorDashboard) {
+            Text("Vendor Dashboard")
+        }
     }
-
-    private var headerSection: some View {
+        private var headerSection: some View {
         ZStack(alignment: .top) {
             LinearGradient(
                 colors: [Color.blue, Color.blue.opacity(0.9)],

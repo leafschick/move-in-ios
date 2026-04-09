@@ -1,11 +1,10 @@
 import SwiftUI
 
 struct LoginView: View {
-    let onLoginSuccess: () -> Void
+    let onCustomerLogin: () -> Void
+    let onVendorLogin: () -> Void
     let onShowSignUp: () -> Void
-
-    @State private var email = ""
-    @State private var password = ""
+    
 
     var body: some View {
         VStack(spacing: 0) {
@@ -18,38 +17,74 @@ struct LoginView: View {
 
                     headerSection
 
-                    VStack(spacing: 20) {
-                        AuthTextField(
-                            title: "Email",
-                            placeholder: "Enter your email",
-                            systemImage: "envelope",
-                            text: $email
-                        )
+                    VStack(spacing: 18) {
 
-                        AuthTextField(
-                            title: "Password",
-                            placeholder: "Enter your password",
-                            systemImage: "lock",
-                            text: $password,
-                            isSecure: true
-                        )
+                        Button(action: {
+                            onCustomerLogin()
+                        }) {
+                            HStack(spacing: 16) {
+                                Image(systemName: "person.fill")
+                                    .font(.system(size: 22))
+                                    .foregroundColor(.blue)
+                                    .frame(width: 50, height: 50)
+                                    .background(Color.blue.opacity(0.1))
+                                    .clipShape(Circle())
+
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Login as Customer")
+                                        .font(.system(size: 18, weight: .semibold))
+
+                                    Text("Book movers and manage your move")
+                                        .font(.system(size: 14))
+                                        .foregroundColor(.gray)
+                                }
+
+                                Spacer()
+
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.gray)
+                            }
+                            .padding()
+                            .background(Color.white)
+                            .cornerRadius(16)
+                            .shadow(color: .black.opacity(0.08), radius: 6, x: 0, y: 4)
+                        }
+
+                        Button(action: {
+                            onVendorLogin()
+                        }) {
+                            HStack(spacing: 16) {
+                                Image(systemName: "building.2.fill")
+                                    .font(.system(size: 22))
+                                    .foregroundColor(.blue)
+                                    .frame(width: 50, height: 50)
+                                    .background(Color.blue.opacity(0.1))
+                                    .clipShape(Circle())
+
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Login as Vendor")
+                                        .font(.system(size: 18, weight: .semibold))
+
+                                    Text("Manage jobs and customer requests")
+                                        .font(.system(size: 14))
+                                        .foregroundColor(.gray)
+                                }
+
+                                Spacer()
+
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.gray)
+                            }
+                            .padding()
+                            .background(Color.white)
+                            .cornerRadius(16)
+                            .shadow(color: .black.opacity(0.08), radius: 6, x: 0, y: 4)
+                        }
+
                     }
                     .padding(.top, 8)
-
-                    Button(action: {
-                        onLoginSuccess()
-                    }) {
-                        Text("Login")
-                            .font(.system(size: 20, weight: .semibold))
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 58)
-                            .background(Color.blue)
-                            .cornerRadius(16)
-                            .shadow(color: .black.opacity(0.12), radius: 8, x: 0, y: 5)
-                    }
-                    .padding(.top, 4)
-
+                    
+        
                     HStack(spacing: 4) {
                         Text("Don't have an account?")
                             .foregroundColor(.black.opacity(0.75))
@@ -102,7 +137,7 @@ struct LoginView: View {
                 .font(.system(size: 34, weight: .bold))
                 .foregroundColor(.blue)
 
-            Text("Welcome back! Please login to continue")
+            Text("Choose how you want to continue")
                 .font(.system(size: 18))
                 .foregroundColor(.black.opacity(0.7))
                 .multilineTextAlignment(.center)
@@ -113,7 +148,8 @@ struct LoginView: View {
 
 #Preview {
     LoginView(
-        onLoginSuccess: {},
+        onCustomerLogin: {},
+        onVendorLogin: {},
         onShowSignUp: {}
     )
 }

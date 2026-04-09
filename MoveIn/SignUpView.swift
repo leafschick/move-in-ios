@@ -2,76 +2,101 @@ import SwiftUI
 
 struct SignUpView: View {
     let onBackToLogin: () -> Void
-    let onSignUpComplete: () -> Void
 
-    @State private var fullName = ""
-    @State private var email = ""
-    @State private var phoneNumber = ""
-    @State private var password = ""
+    @Environment(\.dismiss) private var dismiss
+    @State private var showCustomerSignUp = false
+    @State private var showVendorSignUp = false
 
     var body: some View {
         VStack(spacing: 0) {
             topBar
-
+            
             ScrollView(showsIndicators: false) {
-                VStack(spacing: 22) {
+                VStack(spacing: 24) {
                     Spacer()
-                        .frame(height: 28)
-
+                        .frame(height: 32)
+                    
                     headerSection
-
+                    
                     VStack(spacing: 18) {
-                        AuthTextField(
-                            title: "Full Name",
-                            placeholder: "Enter your full name",
-                            systemImage: "person",
-                            text: $fullName
-                        )
-
-                        AuthTextField(
-                            title: "Email",
-                            placeholder: "Enter your email",
-                            systemImage: "envelope",
-                            text: $email
-                        )
-
-                        AuthTextField(
-                            title: "Phone Number",
-                            placeholder: "Enter your phone number",
-                            systemImage: "phone",
-                            text: $phoneNumber
-                        )
-
-                        AuthTextField(
-                            title: "Password",
-                            placeholder: "Create a password",
-                            systemImage: "lock",
-                            text: $password,
-                            isSecure: true
-                        )
-                    }
-                    .padding(.top, 8)
-
-                    Button(action: {
-                        onSignUpComplete()
-                    }) {
-                        Text("Create Account")
-                            .font(.system(size: 20, weight: .semibold))
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 58)
-                            .background(Color.blue)
+                        Button(action: {
+                            showCustomerSignUp = true
+                        }) {
+                            HStack(spacing: 16) {
+                                Image(systemName: "person.badge.plus.fill")
+                                    .font(.system(size: 22))
+                                    .foregroundColor(.blue)
+                                    .frame(width: 50, height: 50)
+                                    .background(Color.blue.opacity(0.1))
+                                    .clipShape(Circle())
+                                
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Sign Up as Customer")
+                                        .font(.system(size: 18, weight: .semibold))
+                                    
+                                    Text("Create an account to book movers and manage your move")
+                                        .font(.system(size: 14))
+                                        .foregroundColor(.gray)
+                                    
+                                }
+                                
+                                Spacer()
+                                
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.gray)
+                            }
+                            .padding()
+                            .background(Color.white)
                             .cornerRadius(16)
-                            .shadow(color: .black.opacity(0.12), radius: 8, x: 0, y: 5)
+                            .shadow(color: .black.opacity(0.08), radius: 6, x: 0, y: 4)
+                        }
+                        
+                        
+                        Button(action: {
+                            showVendorSignUp = true
+                        }) {
+                            HStack(spacing: 16) {
+                                Image(systemName: "building.2.crop.circle.fill")
+                                    .font(.system(size: 22))
+                                    .foregroundColor(.blue)
+                                    .frame(width: 50, height: 50)
+                                    .background(Color.blue.opacity(0.1))
+                                    .clipShape(Circle())
+                                
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Sign Up as Vendor")
+                                        .font(.system(size: 18, weight: .semibold))
+                                    
+                                    Text("Register your moving business and manage customer requests")
+                                        .font(.system(size: 14))
+                                        .foregroundColor(.gray)
+                                }
+                                
+                                Spacer()
+                                
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.gray)
+                            }
+                            
+                            .padding()
+                            .background(Color.white)
+                            .cornerRadius(16)
+                            .shadow(color: .black.opacity(0.08), radius: 6, x: 0, y: 4)
+                            
+                        }
                     }
-                    .padding(.top, 4)
-
+                    
+                    .padding(.top, 8)
+                    
                     HStack(spacing: 4) {
                         Text("Already have an account?")
                             .foregroundColor(.black.opacity(0.75))
-
+                        
                         Button(action: {
-                            onBackToLogin()
+                            dismiss()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                onBackToLogin()
+                            }
                         }) {
                             Text("Login")
                                 .foregroundColor(.blue)
@@ -80,21 +105,59 @@ struct SignUpView: View {
                     }
                     .font(.system(size: 17))
                     .padding(.top, 10)
-
+                    
                     Spacer()
-                        .frame(height: 32)
+                        .frame(height: 30)
                 }
                 .padding(.horizontal, 20)
             }
         }
         .background(Color(.systemGray6))
         .navigationBarBackButtonHidden(true)
+        .fullScreenCover(isPresented: $showCustomerSignUp) {
+            CustomerSignUpView(
+                onSignUpComplete: {
+                    showCustomerSignUp = false
+                    dismiss()
+                },
+                onBack: {
+                    showCustomerSignUp = false
+                },
+                onShowLogin: {
+                    showCustomerSignUp = false
+                    dismiss()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        onBackToLogin()
+                    }
+                }
+            )
+        }
+        
+        .fullScreenCover(isPresented: $showVendorSignUp) {
+            VendorSignUpView(
+                onSignUpComplete: {
+                    showVendorSignUp = false
+                    dismiss()
+                },
+                onBack: {
+                    showVendorSignUp = false
+                },
+                onShowLogin: {
+                    showVendorSignUp = false
+                    dismiss()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        onBackToLogin()
+                    }
+                }
+            )
+        }
     }
+                    
 
     private var topBar: some View {
         HStack {
             Button(action: {
-                onBackToLogin()
+                dismiss()
             }) {
                 Image(systemName: "arrow.left")
                     .font(.system(size: 20, weight: .medium))
@@ -123,18 +186,17 @@ struct SignUpView: View {
                 .font(.system(size: 34, weight: .bold))
                 .foregroundColor(.blue)
 
-            Text("Create an account to get started")
+            Text("Choose how you want to create your account")
                 .font(.system(size: 18))
                 .foregroundColor(.black.opacity(0.7))
                 .multilineTextAlignment(.center)
         }
-        .padding(.top, 20)
+        .padding(.top, 24)
     }
 }
 
 #Preview {
     SignUpView(
-        onBackToLogin: {},
-        onSignUpComplete: {}
+        onBackToLogin: {}
     )
 }
