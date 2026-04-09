@@ -6,11 +6,7 @@ struct HomeView: View {
     @Binding var globalSearchText: String
     
     @State private var localSearchText: String = ""
-    @State private var showLogin = false
-    @State private var showSignUp = false
-    @State private var showCustomerLogin = false
-    @State private var showVendorLogin = false
-    @State private var showVendorDashboard = false
+
     
     private let features: [HomeFeature] = [
         HomeFeature(title: "Verified", systemImage: "checkmark.shield", color: .blue),
@@ -77,81 +73,6 @@ struct HomeView: View {
             }
             .navigationBarHidden(true)
         }
-        .fullScreenCover(isPresented: $showLogin) {
-            LoginView(
-                onCustomerLogin: {
-                    showLogin = false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        showCustomerLogin = true
-                    }
-                },
-                
-                onVendorLogin: {
-                    showLogin = false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        showVendorLogin = true
-                    }
-                },
-                
-                onShowSignUp: {
-                    showLogin = false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        showSignUp = true
-                    }
-                }
-            )
-        }
-        .fullScreenCover(isPresented: $showSignUp) {
-            SignUpView(
-                onBackToLogin: {
-                    showSignUp = false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        showLogin = true
-                    }
-                }
-            )
-        }
-        
-        .fullScreenCover(isPresented: $showCustomerLogin) {
-            CustomerLoginView(
-                onLoginSuccess: {
-                    showCustomerLogin = false
-                },
-                onBack: {
-                    showCustomerLogin = false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        showLogin = true
-                    }
-                },
-                onShowSignUp: {
-                    showCustomerLogin = false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        showSignUp = true
-                    }
-                }
-            )
-        }
-        
-        .fullScreenCover(isPresented: $showVendorLogin) {
-            VendorLoginView(
-                onLoginSuccess: {
-                    showVendorLogin = false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        showVendorDashboard = true
-                    }
-                },
-                onBack: {
-                    showVendorLogin = false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        showLogin = true
-                    }
-                }
-            )
-        }
-        
-        .fullScreenCover(isPresented: $showVendorDashboard) {
-            Text("Vendor Dashboard")
-        }
     }
         private var headerSection: some View {
         ZStack(alignment: .top) {
@@ -179,29 +100,6 @@ struct HomeView: View {
 
                     Spacer()
 
-                    HStack(spacing: 10) {
-                        Button {
-                            showLogin = true
-                        } label: {
-                            Text("Login")
-                                .font(.system(size: 15, weight: .semibold))
-                                .foregroundColor(.white)
-                                .frame(width: 72, height: 40)
-                                .background(Color.white.opacity(0.18))
-                                .clipShape(RoundedRectangle(cornerRadius: 12))
-                        }
-
-                        Button {
-                            showSignUp = true
-                        } label: {
-                            Text("Sign Up")
-                                .font(.system(size: 15, weight: .semibold))
-                                .foregroundColor(.blue)
-                                .frame(width: 84, height: 40)
-                                .background(Color.white)
-                                .clipShape(RoundedRectangle(cornerRadius: 12))
-                        }
-                    }
                 }
 
                 Button {

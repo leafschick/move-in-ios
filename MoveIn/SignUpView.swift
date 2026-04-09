@@ -1,23 +1,23 @@
 import SwiftUI
 
 struct SignUpView: View {
-    let onBackToLogin: () -> Void
+    let onBack: () -> Void
+    let onShowLogin: () -> Void
 
-    @Environment(\.dismiss) private var dismiss
     @State private var showCustomerSignUp = false
     @State private var showVendorSignUp = false
 
     var body: some View {
         VStack(spacing: 0) {
             topBar
-            
+
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 24) {
                     Spacer()
                         .frame(height: 32)
-                    
+
                     headerSection
-                    
+
                     VStack(spacing: 18) {
                         Button(action: {
                             showCustomerSignUp = true
@@ -29,19 +29,18 @@ struct SignUpView: View {
                                     .frame(width: 50, height: 50)
                                     .background(Color.blue.opacity(0.1))
                                     .clipShape(Circle())
-                                
+
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text("Sign Up as Customer")
                                         .font(.system(size: 18, weight: .semibold))
-                                    
+
                                     Text("Create an account to book movers and manage your move")
                                         .font(.system(size: 14))
                                         .foregroundColor(.gray)
-                                    
                                 }
-                                
+
                                 Spacer()
-                                
+
                                 Image(systemName: "chevron.right")
                                     .foregroundColor(.gray)
                             }
@@ -50,8 +49,7 @@ struct SignUpView: View {
                             .cornerRadius(16)
                             .shadow(color: .black.opacity(0.08), radius: 6, x: 0, y: 4)
                         }
-                        
-                        
+
                         Button(action: {
                             showVendorSignUp = true
                         }) {
@@ -62,41 +60,35 @@ struct SignUpView: View {
                                     .frame(width: 50, height: 50)
                                     .background(Color.blue.opacity(0.1))
                                     .clipShape(Circle())
-                                
+
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text("Sign Up as Vendor")
                                         .font(.system(size: 18, weight: .semibold))
-                                    
+
                                     Text("Register your moving business and manage customer requests")
                                         .font(.system(size: 14))
                                         .foregroundColor(.gray)
                                 }
-                                
+
                                 Spacer()
-                                
+
                                 Image(systemName: "chevron.right")
                                     .foregroundColor(.gray)
                             }
-                            
                             .padding()
                             .background(Color.white)
                             .cornerRadius(16)
                             .shadow(color: .black.opacity(0.08), radius: 6, x: 0, y: 4)
-                            
                         }
                     }
-                    
                     .padding(.top, 8)
-                    
+
                     HStack(spacing: 4) {
                         Text("Already have an account?")
                             .foregroundColor(.black.opacity(0.75))
-                        
+
                         Button(action: {
-                            dismiss()
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                onBackToLogin()
-                            }
+                            onShowLogin()
                         }) {
                             Text("Login")
                                 .foregroundColor(.blue)
@@ -105,7 +97,7 @@ struct SignUpView: View {
                     }
                     .font(.system(size: 17))
                     .padding(.top, 10)
-                    
+
                     Spacer()
                         .frame(height: 30)
                 }
@@ -118,46 +110,38 @@ struct SignUpView: View {
             CustomerSignUpView(
                 onSignUpComplete: {
                     showCustomerSignUp = false
-                    dismiss()
+                    onBack()
                 },
                 onBack: {
                     showCustomerSignUp = false
                 },
                 onShowLogin: {
                     showCustomerSignUp = false
-                    dismiss()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        onBackToLogin()
-                    }
+                    onShowLogin()
                 }
             )
         }
-        
         .fullScreenCover(isPresented: $showVendorSignUp) {
             VendorSignUpView(
                 onSignUpComplete: {
                     showVendorSignUp = false
-                    dismiss()
+                    onBack()
                 },
                 onBack: {
                     showVendorSignUp = false
                 },
                 onShowLogin: {
                     showVendorSignUp = false
-                    dismiss()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        onBackToLogin()
-                    }
+                    onShowLogin()
                 }
             )
         }
     }
-                    
 
     private var topBar: some View {
         HStack {
             Button(action: {
-                dismiss()
+                onBack()
             }) {
                 Image(systemName: "arrow.left")
                     .font(.system(size: 20, weight: .medium))
@@ -197,6 +181,7 @@ struct SignUpView: View {
 
 #Preview {
     SignUpView(
-        onBackToLogin: {}
+        onBack: {},
+        onShowLogin: {}
     )
 }
