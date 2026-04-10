@@ -8,6 +8,7 @@ struct AppFlowView: View {
         case customerLogin
         case vendorLogin
         case home
+        case vendorDashboard
     }
 
     @State private var currentScreen: Screen = .landing
@@ -25,7 +26,7 @@ struct AppFlowView: View {
                             currentScreen = .signup
                         }
                     )
-                    
+
                 case .login:
                     LoginView(
                         onCustomerLogin: {
@@ -41,7 +42,7 @@ struct AppFlowView: View {
                             currentScreen = .landing
                         }
                     )
-                    
+
                 case .signup:
                     SignUpView(
                         onBack: {
@@ -51,7 +52,7 @@ struct AppFlowView: View {
                             currentScreen = .login
                         }
                     )
-                    
+
                 case .customerLogin:
                     CustomerLoginView(
                         onLoginSuccess: {
@@ -63,19 +64,27 @@ struct AppFlowView: View {
                         onShowSignUp: {
                             currentScreen = .signup
                         }
-                )
-                
-            case .vendorLogin:
-                VendorLoginView(
-                    onLoginSuccess: {
-                        currentScreen = .home
-                    },
-                    onBack: {
-                        currentScreen = .login
-                    }
-            )
+                    )
+
+                case .vendorLogin:
+                    VendorLoginView(
+                        onLoginSuccess: {
+                            currentScreen = .vendorDashboard
+                        },
+                        onBack: {
+                            currentScreen = .login
+                        }
+                    )
+
                 case .home:
                     MainTabView()
+
+                case .vendorDashboard:
+                    VendorDashboardView(
+                        onLogout: {
+                            currentScreen = .landing
+                        }
+                    )
                 }
             }
         }
