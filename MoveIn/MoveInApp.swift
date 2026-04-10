@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 import UserNotifications
 import Combine
 
@@ -18,6 +19,7 @@ struct MoveInApp: App {
             ContentView()
                 .environmentObject(notificationManager)
         }
+        .modelContainer(for: [UserProfile.self, Mover.self, Booking.self])
     }
 }
 
