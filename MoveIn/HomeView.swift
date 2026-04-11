@@ -7,7 +7,6 @@ struct HomeView: View {
     
     @State private var localSearchText: String = ""
 
-    
     private let features: [HomeFeature] = [
         HomeFeature(title: "Verified", systemImage: "checkmark.shield", color: .blue),
         HomeFeature(title: "Top Rated", systemImage: "arrow.up.right", color: .green),
@@ -74,7 +73,8 @@ struct HomeView: View {
             .navigationBarHidden(true)
         }
     }
-        private var headerSection: some View {
+
+    private var headerSection: some View {
         ZStack(alignment: .top) {
             LinearGradient(
                 colors: [Color.blue, Color.blue.opacity(0.9)],
@@ -100,6 +100,18 @@ struct HomeView: View {
 
                     Spacer()
 
+                    Button(action: logout) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "rectangle.portrait.and.arrow.right")
+                            Text("Logout")
+                        }
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(Color.white.opacity(0.18))
+                        .clipShape(Capsule())
+                    }
                 }
 
                 Button {
@@ -141,6 +153,10 @@ struct HomeView: View {
             .padding(.horizontal, 18)
             .padding(.top, 58)
         }
+    }
+
+    private func logout() {
+        NotificationCenter.default.post(name: Notification.Name("logout"), object: nil)
     }
 
     private var featureCardsSection: some View {
