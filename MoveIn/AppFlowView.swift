@@ -88,6 +88,10 @@ struct AppFlowView: View {
                 }
             }
         }
+        // ✅ THIS IS THE FIX (listen for logout from HomeView)
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("logout"))) { _ in
+            currentScreen = .landing
+        }
     }
 }
 
