@@ -15,6 +15,8 @@ struct CustomerLoginView: View {
     @State private var email = ""
     @State private var password = ""
 
+    @AppStorage("currentUserEmail") private var currentUserEmail = ""
+
     var body: some View {
         VStack(spacing: 0) {
             topBar
@@ -45,6 +47,8 @@ struct CustomerLoginView: View {
                     .padding(.top, 8)
 
                     Button(action: {
+                        let cleanedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+                        currentUserEmail = cleanedEmail.isEmpty ? "guest@movein.com" : cleanedEmail
                         onLoginSuccess()
                     }) {
                         Text("Login as Customer")
@@ -131,4 +135,3 @@ struct CustomerLoginView: View {
         onShowSignUp: {}
     )
 }
-

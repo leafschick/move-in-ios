@@ -4,9 +4,21 @@
 //
 //  Created by Sofiia Beliak on 2026-03-26.
 //
+
 import SwiftUI
 
 struct ProfileView: View {
+    @AppStorage("currentUserEmail") private var currentUserEmail = "guest@movein.com"
+
+    private var displayName: String {
+        let emailPrefix = currentUserEmail.split(separator: "@").first.map(String.init) ?? "Customer"
+        let cleaned = emailPrefix.replacingOccurrences(of: ".", with: " ")
+        return cleaned
+            .split(separator: " ")
+            .map { $0.capitalized }
+            .joined(separator: " ")
+    }
+
     var body: some View {
         VStack(spacing: 20) {
             Text("Profile")
@@ -23,18 +35,17 @@ struct ProfileView: View {
                         .foregroundColor(.blue)
                 )
 
-            Text("John Carter")
+            Text(displayName)
                 .font(.headline)
                 .padding(.bottom, 30)
-
 
             VStack(spacing: 12) {
                 profileCard(
                     title: "Email",
-                    value: "john.carter@email.com",
+                    value: currentUserEmail,
                     systemImage: "envelope.fill"
                 )
-                
+
                 profileCard(
                     title: "Phone Number",
                     value: "+1 (555) 123-4567",
@@ -54,7 +65,7 @@ struct ProfileView: View {
                 )
             }
             .padding(.horizontal)
-            
+
             Spacer()
         }
     }

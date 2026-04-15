@@ -3,6 +3,7 @@ import UIKit
 
 struct BookingConfirmationView: View {
     @Environment(\.dismiss) var dismiss
+    @AppStorage("selectedTab") private var selectedTabRaw = TabItem.home.rawValue
 
     let serviceName: String
     let bookingDate: String
@@ -93,6 +94,7 @@ struct BookingConfirmationView: View {
                     }
 
                     Button(action: {
+                        selectedTabRaw = TabItem.bookings.rawValue
                         onEditBooking?()
                         dismiss()
                     }) {

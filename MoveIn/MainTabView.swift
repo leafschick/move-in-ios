@@ -1,13 +1,20 @@
 import SwiftUI
 
 struct MainTabView: View {
-    @State private var selectedTab: TabItem = .home
+    @AppStorage("selectedTab") private var selectedTabRaw = TabItem.home.rawValue
     @State private var globalSearchText: String = ""
 
+    private var selectedTabBinding: Binding<TabItem> {
+        Binding(
+            get: { TabItem(rawValue: selectedTabRaw) ?? .home },
+            set: { selectedTabRaw = $0.rawValue }
+        )
+    }
+
     var body: some View {
-        TabView(selection: $selectedTab) {
+        TabView(selection: selectedTabBinding) {
             HomeView(
-                selectedTab: $selectedTab,
+                selectedTab: selectedTabBinding,
                 globalSearchText: $globalSearchText
             )
             .tabItem {
@@ -19,7 +26,7 @@ struct MainTabView: View {
             SearchView(
                 initialSearchText: $globalSearchText,
                 onBack: {
-                    selectedTab = .home
+                    selectedTabRaw = TabItem.home.rawValue
                 }
             )
             .tabItem {
@@ -53,60 +60,12 @@ struct MainTabView: View {
     }
 }
 
-enum TabItem {
+enum TabItem: String {
     case home
     case search
     case bookings
     case notifications
     case profile
-}
-
-struct BookingsPlaceholderTabView: View {
-    var body: some View {
-        NavigationStack {
-            VStack(spacing: 12) {
-                Image(systemName: "calendar.circle.fill")
-                    .font(.system(size: 56))
-                    .foregroundColor(.blue)
-
-                Text("Bookings Page")
-                    .font(.title2)
-                    .fontWeight(.bold)
-
-                Text("Your booking screen can be added here later.")
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(.gray)
-                    .padding(.horizontal)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color(.systemGray6))
-            .navigationTitle("Bookings")
-        }
-    }
-}
-
-struct ProfilePlaceholderTabView: View {
-    var body: some View {
-        NavigationStack {
-            VStack(spacing: 12) {
-                Image(systemName: "person.crop.circle.fill")
-                    .font(.system(size: 56))
-                    .foregroundColor(.blue)
-
-                Text("Profile Page")
-                    .font(.title2)
-                    .fontWeight(.bold)
-
-                Text("Your profile screen can be added here later.")
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(.gray)
-                    .padding(.horizontal)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color(.systemGray6))
-            .navigationTitle("Profile")
-        }
-    }
 }
 
 #Preview {
