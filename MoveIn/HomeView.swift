@@ -15,40 +15,15 @@ struct HomeView: View {
     
     private var filteredMovers: [HomeMover] {
         if localSearchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            return movers
+            return HomeMover.mockMovers
         }
         
-        return movers.filter { mover in
+        return HomeMover.mockMovers.filter { mover in
             mover.name.localizedCaseInsensitiveContains(localSearchText) ||
             mover.city.localizedCaseInsensitiveContains(localSearchText) ||
             mover.description.localizedCaseInsensitiveContains(localSearchText)
         }
     }
-    
-    private let movers: [HomeMover] = [
-        HomeMover(
-            name: "Swift Movers",
-            imageName: nil,
-            rating: 4.8,
-            reviewCount: 234,
-            priceRange: "$150-$300",
-            description: "Professional moving services with 10+ years of experience.",
-            city: "New York, NY",
-            services: ["Local Moving", "Long Distance Moving", "Packing Assistance", "Furniture Handling"],
-            isFeatured: true
-        ),
-        HomeMover(
-            name: "Urban Move Co.",
-            imageName: nil,
-            rating: 4.7,
-            reviewCount: 189,
-            priceRange: "$180-$350",
-            description: "Reliable local and long-distance moving with secure handling.",
-            city: "Brooklyn, NY",
-            services: ["Apartment Moving", "Office Relocation", "Packing", "Storage Help"],
-            isFeatured: true
-        )
-    ]
     
     var body: some View {
         NavigationStack {
@@ -216,6 +191,31 @@ struct HomeMover: Identifiable {
     let city: String
     let services: [String]
     let isFeatured: Bool
+
+    static let mockMovers: [HomeMover] = [
+        HomeMover(
+            name: "Swift Movers",
+            imageName: nil,
+            rating: 4.8,
+            reviewCount: 234,
+            priceRange: "$150-$300",
+            description: "Professional moving services with 10+ years of experience.",
+            city: "New York, NY",
+            services: ["Local Moving", "Long Distance Moving", "Packing Assistance", "Furniture Handling"],
+            isFeatured: true
+        ),
+        HomeMover(
+            name: "Urban Move Co.",
+            imageName: nil,
+            rating: 4.7,
+            reviewCount: 189,
+            priceRange: "$180-$350",
+            description: "Reliable local and long-distance moving with secure handling.",
+            city: "Brooklyn, NY",
+            services: ["Apartment Moving", "Office Relocation", "Packing", "Storage Help"],
+            isFeatured: true
+        )
+    ]
 }
 
 struct HomeFeatureCard: View {

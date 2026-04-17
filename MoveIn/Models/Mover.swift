@@ -20,6 +20,7 @@ final class Mover{
     var city: String
     var services: [String] // ???????
     var isVerified: Bool
+    var isFavorite: Bool
     var createdAt: Date
     
     init(
@@ -33,6 +34,7 @@ final class Mover{
         city: String,
         services: [String],
         isVerified: Bool,
+        isFavorite: Bool = false,
         createdAt: Date = Date()
     ){
         self.moverId = moverId
@@ -45,6 +47,7 @@ final class Mover{
         self.city = city
         self.services = services
         self.isVerified = isVerified
+        self.isFavorite = isFavorite
         self.createdAt = createdAt
     }
 }

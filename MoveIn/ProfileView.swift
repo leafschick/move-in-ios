@@ -9,6 +9,11 @@ import SwiftUI
 
 struct ProfileView: View {
     @AppStorage("currentUserEmail") private var currentUserEmail = "guest@movein.com"
+    @AppStorage("currentUserPhone") private var currentUserPhone = "+1 (555) 123-4567"
+    @AppStorage("currentUserLocation") private var currentUserLocation = "Los Angeles, CA"
+    @AppStorage("isDarkMode") private var isDarkMode = false
+    
+    @State private var showingEditProfile = false
 
     private var displayName: String {
         let emailPrefix = currentUserEmail.split(separator: "@").first.map(String.init) ?? "Customer"
@@ -20,53 +25,127 @@ struct ProfileView: View {
     }
 
     var body: some View {
-        VStack(spacing: 20) {
-            Text("Profile")
-                .font(.title)
-                .fontWeight(.bold)
-                .padding(.top, 30)
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 20) {
+                    Circle()
+                        .fill(Color.blue.opacity(0.2))
+                        .frame(width: 90, height: 90)
+                        .overlay(
+                            Image(systemName: "person.fill")
+                                .font(.system(size: 40))
+                                .foregroundColor(.blue)
+                        )
+                        .padding(.top, 20)
 
-            Circle()
-                .fill(Color.blue.opacity(0.2))
-                .frame(width: 90, height: 90)
-                .overlay(
-                    Image(systemName: "person.fill")
-                        .font(.system(size: 40))
-                        .foregroundColor(.blue)
-                )
+                    Text(displayName)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .padding(.bottom, 10)
 
-            Text(displayName)
-                .font(.headline)
-                .padding(.bottom, 30)
+                    VStack(spacing: 12) {
+                        profileCard(
+                            title: "Email",
+                            value: currentUserEmail,
+                            systemImage: "envelope.fill"
+                        )
 
-            VStack(spacing: 12) {
-                profileCard(
-                    title: "Email",
-                    value: currentUserEmail,
-                    systemImage: "envelope.fill"
-                )
+                        profileCard(
+                            title: "Phone Number",
+                            value: currentUserPhone,
+                            systemImage: "phone.fill"
+                        )
 
-                profileCard(
-                    title: "Phone Number",
-                    value: "+1 (555) 123-4567",
-                    systemImage: "phone.fill"
-                )
+                        profileCard(
+                            title: "Location",
+                            value: currentUserLocation,
+                            systemImage: "mappin.and.ellipse"
+                        )
 
-                profileCard(
-                    title: "Location",
-                    value: "Los Angeles, CA",
-                    systemImage: "mappin.and.ellipse"
-                )
+                        profileCard(
+                            title: "Account Type",
+                            value: "Move-In Customer",
+                            systemImage: "truck.box.fill"
+                        )
+                    }
+                    .padding(.horizontal)
 
-                profileCard(
-                    title: "Account Type",
-                    value: "Move-In Customer",
-                    systemImage: "truck.box.fill"
-                )
+                    // SETTINGS SECTION
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Settings")
+                            .font(.headline)
+                            .padding(.horizontal)
+                            .padding(.top, 20)
+                        
+                        VStack(spacing: 0) {
+                            // Dark Mode Toggle
+                            Toggle(isOn: $isDarkMode) {
+                                HStack(spacing: 14) {
+                                    Image(systemName: "moon.fill")
+                                        .foregroundColor(.indigo)
+                                        .font(.system(size: 20))
+                                    Text("Dark Mode")
+                                        .font(.system(size: 17))
+                                }
+                            }
+                            .padding()
+                            
+                            Divider()
+                            
+                            // Saved Vendors link
+                            NavigationLink(destination: SavedVendorsView()) {
+                                HStack(spacing: 14) {
+                                    Image(systemName: "heart.fill")
+                                        .foregroundColor(.red)
+                                        .font(.system(size: 20))
+                                    Text("Saved Vendors")
+                                        .font(.system(size: 17))
+                                        .foregroundColor(.primary)
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(.gray)
+                                }
+                                .padding()
+                            }
+                            
+                            Divider()
+
+                            // Logout Button
+                            Button(action: {
+                                NotificationCenter.default.post(name: Notification.Name("logout"), object: nil)
+                            }) {
+                                HStack(spacing: 14) {
+                                    Image(systemName: "rectangle.portrait.and.arrow.right")
+                                        .foregroundColor(.red)
+                                        .font(.system(size: 20))
+                                    Text("Logout")
+                                        .font(.system(size: 17, weight: .semibold))
+                                        .foregroundColor(.red)
+                                    Spacer()
+                                }
+                            }
+                            .padding()
+                        }
+                        .background(Color(.systemBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                        .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 3)
+                        .padding(.horizontal)
+                    }
+
+                    Spacer(minLength: 40)
+                }
             }
-            .padding(.horizontal)
-
-            Spacer()
+            .navigationTitle("Profile")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Edit") {
+                        showingEditProfile = true
+                    }
+                }
+            }
+            .sheet(isPresented: $showingEditProfile) {
+                EditProfileView()
+            }
         }
     }
 }

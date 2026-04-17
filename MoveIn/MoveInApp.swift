@@ -95,4 +95,10 @@ class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterD
         // Show as banner and play sound even if app is foregrounded
         completionHandler([.banner, .sound])
     }
+    
+    func clearAll() {
+        DispatchQueue.main.async {
+            self.notifications.removeAll()
+        }
+    }
 }

@@ -59,6 +59,16 @@ struct NotificationView: View {
                 }
             }
             .navigationTitle("Notifications")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    if !notificationManager.notifications.isEmpty {
+                        Button("Clear All") {
+                            notificationManager.clearAll()
+                        }
+                        .foregroundColor(.red)
+                    }
+                }
+            }
         }
     }
     

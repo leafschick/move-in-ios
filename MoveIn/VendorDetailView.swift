@@ -5,6 +5,9 @@ struct VendorDetailView: View {
     let mover: HomeMover
     @Environment(\.dismiss) private var dismiss
     @State private var showBooking = false
+    
+    @AppStorage("savedVendorNames") private var savedVendorNames = ""
+    @State private var isFavorite = false
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -45,6 +48,25 @@ struct VendorDetailView: View {
                         .padding(.top, 20)
                         .padding(.leading, 20)
                         .offset(y: mover.isFeatured ? 42 : 0)
+                        
+                        // Favorite Button
+                        HStack {
+                            Spacer()
+                            Button {
+                                toggleFavorite()
+                            } label: {
+                                Image(systemName: isFavorite ? "heart.fill" : "heart")
+                                    .font(.system(size: 20, weight: .bold))
+                                    .foregroundColor(isFavorite ? .red : .black)
+                                    .frame(width: 44, height: 44)
+                                    .background(Color.white)
+                                    .clipShape(Circle())
+                                    .shadow(color: .black.opacity(0.08), radius: 8, x: 0, y: 4)
+                            }
+                            .padding(.top, 20)
+                            .padding(.trailing, 20)
+                            .offset(y: mover.isFeatured ? 42 : 0)
+                        }
                     }
 
                     VStack(alignment: .leading, spacing: 18) {
@@ -136,6 +158,26 @@ struct VendorDetailView: View {
         .sheet(isPresented: $showBooking) {
             BookingView()
         }
+        .onAppear {
+            checkIfFavorite()
+        }
+    }
+    
+    private func checkIfFavorite() {
+        let vendors = savedVendorNames.components(separatedBy: ",")
+        isFavorite = vendors.contains(mover.name)
+    }
+    
+    private func toggleFavorite() {
+        var vendors = savedVendorNames.components(separatedBy: ",").filter { !$0.isEmpty }
+        if vendors.contains(mover.name) {
+            vendors.removeAll { $0 == mover.name }
+            isFavorite = false
+        } else {
+            vendors.append(mover.name)
+            isFavorite = true
+        }
+        savedVendorNames = vendors.joined(separator: ",")
     }
 
     @ViewBuilder
